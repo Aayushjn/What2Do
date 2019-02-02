@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.fragment.ReminderFragment">
+
+    <TextView
+        android:id="@+id/text_todo_title"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/toolbar"
+        android:background="#212121"
+        android:ellipsize="middle"
+        android:gravity="center|start"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        tools:text="@string/app_name"
+        android:textColor="@color/colorIcon"
+        android:textSize="20sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_todo_remove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_pressed_background"
+        android:text="@string/remove"
+        android:textColor="@android:color/white"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_todo_remove"
+        android:layout_below="@id/text_todo_title"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingTop="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1.5"
+            android:drawableStart="@drawable/ic_snooze"
+            android:drawablePadding="8dp"
+            android:gravity="start"
+            android:padding="8dp"
+            android:text="@string/snooze"
+            android:textSize="16sp"/>
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner_snooze"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1.5"/>
+    </LinearLayout>
+
+</RelativeLayout>
