@@ -47,7 +47,7 @@ class AboutFragment : Fragment() {
 
         githubTextView.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://www.github.com/Aayushjn")
+            intent.data = Uri.parse("https://www.github.com/Aayushjn/What2Do")
 
             startActivity(intent)
         }
