@@ -40,11 +40,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.core:core-ktx:1.1.0-alpha04'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
-    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-alpha01'
     implementation 'androidx.room:room-runtime:2.1.0-alpha04'
 
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
