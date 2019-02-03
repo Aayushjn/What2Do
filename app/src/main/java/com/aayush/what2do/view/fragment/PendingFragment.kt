@@ -7,6 +7,7 @@ import android.os.ParcelUuid
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +23,7 @@ import com.aayush.what2do.util.recyclerview.callback.SwipeToDeleteCallback
 import com.aayush.what2do.util.service.TodoNotificationService
 import com.aayush.what2do.view.activity.AddTodoActivity
 import com.amulyakhare.textdrawable.util.ColorGenerator
-import jp.wasabeef.recyclerview.animators.FadeInDownAnimator
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.fragment_pending.*
 import java.util.*
 
@@ -96,7 +97,7 @@ class PendingFragment : Fragment() {
 
         recyclerView.setEmptyView(img_empty_state)
         recyclerView.setHasFixedSize(true)
-        recyclerView.itemAnimator = FadeInDownAnimator()
+        recyclerView.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.addOnScrollListener(
             object: RecyclerView.OnScrollListener() {
