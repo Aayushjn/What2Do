@@ -14,6 +14,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Setup for custom font injection
         ViewPump.init(ViewPump.builder()
             .addInterceptor(CalligraphyInterceptor(
                 CalligraphyConfig.Builder()
@@ -36,6 +37,7 @@ class App : Application() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        // Singleton design for the app database
         fun getAppDatabase(context: Context): AppDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {

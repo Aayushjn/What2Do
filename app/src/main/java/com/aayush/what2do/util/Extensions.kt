@@ -9,8 +9,7 @@ fun Parcel.readBoolean() = readInt() != 0
 
 fun Parcel.writeBoolean(value: Boolean) = writeInt(if (value) 1 else 0)
 
-inline fun <T> Parcel.readNullable(reader: () -> T) =
-    if (readInt() != 0) reader() else null
+inline fun <T> Parcel.readNullable(reader: () -> T) = if (readInt() != 0) reader() else null
 
 inline fun <T> Parcel.writeNullable(value: T?, writer: (T) -> Unit) {
     if (value != null) {
@@ -26,8 +25,6 @@ inline fun <reified T: Enum<T>> Parcel.readEnum() = readInt().let { if (it >= 0)
 
 fun <T: Enum<T>> Parcel.writeEnum(value: T?) = writeInt(value?.ordinal ?: -1)
 
-fun Parcel.readDate() =
-    readNullable { Date(readLong()) }
+fun Parcel.readDate() = readNullable { Date(readLong()) }
 
-fun Parcel.writeDate(value: Date?) =
-    writeNullable(value) { writeLong(it.time) }
+fun Parcel.writeDate(value: Date?) = writeNullable(value) { writeLong(it.time) }

@@ -39,6 +39,7 @@ data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
 
     override fun describeContents() = 0
 
+    // Sort by priority, then by date if any, otherwise te title
     override fun compareTo(other: TodoNote) = compareValuesBy(
         this,
         other,
@@ -46,12 +47,9 @@ data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
         { if (it.hasReminder && it.date != null) it.date else it.title }
     )
 
-    companion object {
-        @JvmField
-        val CREATOR = object : Parcelable.Creator<TodoNote> {
-            override fun createFromParcel(parcel: Parcel) = TodoNote(parcel)
+    companion object CREATOR: Parcelable.Creator<TodoNote> {
+        override fun createFromParcel(parcel: Parcel) = TodoNote(parcel)
 
-            override fun newArray(size: Int) = arrayOfNulls<TodoNote>(size)
-        }
+        override fun newArray(size: Int) = arrayOfNulls<TodoNote>(size)
     }
 }

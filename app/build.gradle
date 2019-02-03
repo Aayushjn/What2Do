@@ -40,25 +40,38 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    // ConstraintLayout
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
+    // Kotlin core Android libraries
     implementation 'androidx.core:core-ktx:1.1.0-alpha04'
+    // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
+    // Room runtime library
     implementation 'androidx.room:room-runtime:2.1.0-alpha04'
 
+    // TextDrawable
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
+    // Google's Material Design library
     implementation 'com.google.android.material:material:1.1.0-alpha03'
 
+    // Timber for logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    // Material DateTimePicker
     implementation 'com.wdullaer:materialdatetimepicker:4.1.1'
 
+    // Custom font injection library
     implementation 'io.github.inflationx:calligraphy3:3.0.0'
     implementation 'io.github.inflationx:viewpump:1.0.0'
 
+    // RecyclerView animators
     implementation 'jp.wasabeef:recyclerview-animators:3.0.0'
 
+    // Kotlin Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
 
+    // Room compiler annotation processor for Kotlin
     kapt 'androidx.room:room-compiler:2.1.0-alpha04'
 
     testImplementation 'junit:junit:4.12'

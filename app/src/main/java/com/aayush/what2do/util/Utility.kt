@@ -13,17 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-fun getAllTodoNotes(dao: TodoNoteDao): List<TodoNote> = runBlocking(Dispatchers.IO) {
-    dao.getAllTodoNotes()
-}
+fun getAllTodoNotes(dao: TodoNoteDao) = runBlocking(Dispatchers.IO) { dao.getAllTodoNotes() }
 
-fun insertTodoNote(dao: TodoNoteDao, todoNote: TodoNote) = runBlocking(Dispatchers.IO) {
-    dao.insertTodoNote(todoNote)
-}
+fun insertTodoNote(dao: TodoNoteDao, todoNote: TodoNote) = runBlocking(Dispatchers.IO) { dao.insertTodoNote(todoNote) }
 
-fun deleteTodoNote(dao: TodoNoteDao, todoNote: TodoNote) = runBlocking(Dispatchers.IO) {
-    dao.deleteTodoNote(todoNote)
-}
+fun deleteTodoNote(dao: TodoNoteDao, todoNote: TodoNote) = runBlocking(Dispatchers.IO) { dao.deleteTodoNote(todoNote) }
 
 fun formatDate(formatString : String, date : Date?) : String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -33,9 +27,7 @@ fun formatDate(formatString : String, date : Date?) : String {
     }
 }
 
-fun getAlarmManager(context: Context): AlarmManager {
-    return context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-}
+fun getAlarmManager(context: Context) = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
 fun createAlarm(context: Context, intent: Intent, requestCode: Int, time: Long) {
     val alarmManager = getAlarmManager(context)
