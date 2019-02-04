@@ -10,11 +10,11 @@ import com.aayush.what2do.R
 import com.aayush.what2do.util.recyclerview.adapter.TodoNotesAdapter
 
 class SwipeToDeleteCallback(private val adapter: TodoNotesAdapter) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private val clearPaint: Paint = Paint()
 
-    private val icon: Drawable? = ContextCompat.getDrawable(adapter.context, R.drawable.ic_delete)
-    private val background: ColorDrawable = ColorDrawable(Color.RED)
+    private var icon: Drawable? = ContextCompat.getDrawable(adapter.context, R.drawable.ic_delete)
+    private var background: ColorDrawable = ColorDrawable(Color.RED)
 
     init {
         clearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
@@ -30,8 +30,8 @@ class SwipeToDeleteCallback(private val adapter: TodoNotesAdapter) :
         val backgroundCornerOffset = 20
 
         val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
-        val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
-        val iconBottom = iconTop + icon.intrinsicHeight
+        val iconTop = itemView.top + (itemView.height - icon!!.intrinsicHeight) / 2
+        val iconBottom = iconTop + icon!!.intrinsicHeight
 
         val isCancelled = dX == 0F && !isCurrentlyActive
 
@@ -43,21 +43,39 @@ class SwipeToDeleteCallback(private val adapter: TodoNotesAdapter) :
         }
 
         when {
+            dX > 0 -> { // Swiping to the right
+                background = ColorDrawable(Color.BLUE)
+                icon = ContextCompat.getDrawable(adapter.context, R.drawable.ic_voice)
+                val iconLeft = itemView.left + iconMargin
+                val iconRight = iconLeft + icon!!.intrinsicWidth
+                icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                background.setBounds(
+                    itemView.left,
+                    itemView.top,
+                    itemView.left + dX.toInt() + backgroundCornerOffset,
+                    itemView.bottom
+                )
+            }
             dX < 0 -> { // Swiping to the left
-                val iconLeft = itemView.right - iconMargin - icon.intrinsicWidth
+                background = ColorDrawable(Color.RED)
+                icon = ContextCompat.getDrawable(adapter.context, R.drawable.ic_delete)
                 val iconRight = itemView.right - iconMargin
-                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                val iconLeft = iconRight - icon!!.intrinsicWidth
+                icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 
                 background.setBounds(
                     itemView.right + dX.toInt() - backgroundCornerOffset,
-                    itemView.top, itemView.right, itemView.bottom
+                    itemView.top,
+                    itemView.right,
+                    itemView.bottom
                 )
             }
             else -> background.setBounds(0, 0, 0, 0)
         }
 
         background.draw(c)
-        icon.draw(c)
+        icon!!.draw(c)
     }
 
     override fun onMove(
@@ -69,7 +87,13 @@ class SwipeToDeleteCallback(private val adapter: TodoNotesAdapter) :
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
-        adapter.deleteItem(position)
+        if (direction == ItemTouchHelper.LEFT) {
+            adapter.deleteItem(position)
+        }
+        else {
+            adapter.readItem(position)
+            adapter.notifyItemChanged(position)
+        }
     }
 
     private fun clearCanvas(c: Canvas, left: Float, top: Float, right: Float, bottom: Float) {

@@ -2,10 +2,5 @@
 build/
 local.properties
 *.iml
-.idea/workspace.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-.idea/caches
 app/libs/
+/.idea/

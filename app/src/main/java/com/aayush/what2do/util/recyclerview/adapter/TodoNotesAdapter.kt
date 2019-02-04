@@ -3,6 +3,7 @@ package com.aayush.what2do.util.recyclerview.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.speech.tts.TextToSpeech
 import android.text.format.DateFormat
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -21,12 +23,15 @@ import com.aayush.what2do.util.service.TodoNotificationService
 import com.aayush.what2do.view.activity.AddTodoActivity
 import com.amulyakhare.textdrawable.TextDrawable
 import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
+import java.util.*
 
 class TodoNotesAdapter(var context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var todoNotes = emptyList<TodoNote>().toMutableList()
     private lateinit var deletedItem : TodoNote
     private var deletedItemPosition = 0
+    private lateinit var tts: TextToSpeech
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item, parent, false)
@@ -102,6 +107,36 @@ class TodoNotesAdapter(var context: Context) :
         deleteTodoNote(App.getAppDatabase(context).todoNoteDao(), deletedItem)
         deleteAlarm(context, Intent(context, TodoNotificationService::class.java), deletedItem.id.hashCode())
         showUndoSnackbar()
+    }
+
+    fun readItem(position: Int) {
+        tts = TextToSpeech(context, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                val result = this.tts.setLanguage(Locale.ENGLISH)
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Toast.makeText(context, "This Language is not supported", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    val selectedItem = todoNotes[position]
+                    val timeToShow = formatDate(
+                        if (DateFormat.is24HourFormat(context)) "MMM d, yyyy  h:mm a"
+                        else "MMM d, yyyy  k:mm",
+                        selectedItem.date)
+                    val text = if (selectedItem.hasReminder && selectedItem.date != null) {
+                        selectedItem.title + "\n" + selectedItem.description + "\n" +
+                                selectedItem.priority + " priority\nTo be completed on " +
+                                formatDate(timeToShow, selectedItem.date)
+                    } else {
+                        selectedItem.title + "\n" + selectedItem.description + "\n" +
+                                selectedItem.priority + " priority"
+                    }
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TodoNote")
+                }
+            }
+            else {
+                Timber.e("Initialization Failed!")
+            }
+        })
     }
 
     internal fun setTodoNotes(todoNotes: List<TodoNote>?) {
