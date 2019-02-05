@@ -31,7 +31,7 @@ class TodoNotesAdapter(var context: Context) :
     private var todoNotes = emptyList<TodoNote>().toMutableList()
     private lateinit var deletedItem : TodoNote
     private var deletedItemPosition = 0
-    private lateinit var tts: TextToSpeech
+    var tts: TextToSpeech? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item, parent, false)
@@ -112,7 +112,7 @@ class TodoNotesAdapter(var context: Context) :
     fun readItem(position: Int) {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
-                val result = this.tts.setLanguage(Locale.ENGLISH)
+                val result = this.tts?.setLanguage(Locale.ENGLISH)
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Toast.makeText(context, "This Language is not supported", Toast.LENGTH_SHORT).show()
                 }
@@ -130,13 +130,15 @@ class TodoNotesAdapter(var context: Context) :
                         selectedItem.title + "\n" + selectedItem.description + "\n" +
                                 selectedItem.priority + " priority"
                     }
-                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TodoNote")
+                    tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TodoNote")
                 }
             }
             else {
                 Timber.e("Initialization Failed!")
             }
         })
+        notifyItemRemoved(position)
+        notifyItemInserted(position)
     }
 
     internal fun setTodoNotes(todoNotes: List<TodoNote>?) {

@@ -23,7 +23,7 @@ import com.aayush.what2do.util.recyclerview.callback.SwipeToDeleteCallback
 import com.aayush.what2do.util.service.TodoNotificationService
 import com.aayush.what2do.view.activity.AddTodoActivity
 import com.amulyakhare.textdrawable.util.ColorGenerator
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator
 import kotlinx.android.synthetic.main.fragment_pending.*
 import java.util.*
 
@@ -92,12 +92,28 @@ class PendingFragment : Fragment() {
         setAlarms()
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (adapter.tts != null) {
+            if (adapter.tts!!.isSpeaking) {
+                adapter.tts!!.stop()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (adapter.tts != null) {
+            adapter.tts!!.shutdown()
+        }
+    }
+
     private fun setupViews() {
         recyclerView = recycler_todo
 
         recyclerView.setEmptyView(img_empty_state)
         recyclerView.setHasFixedSize(true)
-        recyclerView.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
+        recyclerView.itemAnimator = SlideInRightAnimator(OvershootInterpolator(1.0f))
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.addOnScrollListener(
             object: RecyclerView.OnScrollListener() {
