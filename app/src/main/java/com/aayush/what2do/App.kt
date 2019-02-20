@@ -10,7 +10,7 @@ import io.github.inflationx.viewpump.ViewPump
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
-class App : Application() {
+class App: Application() {
     override fun onCreate() {
         super.onCreate()
 

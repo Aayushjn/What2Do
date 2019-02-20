@@ -39,25 +39,25 @@ import java.util.*
 
 
 class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-    private lateinit var formatString : String
+    private lateinit var formatString: String
 
-    private lateinit var todoNote : TodoNote
-    private lateinit var todoTitle : String
-    private lateinit var todoDescription : String
+    private lateinit var todoNote: TodoNote
+    private lateinit var todoTitle: String
+    private lateinit var todoDescription: String
     private lateinit var todoPriority: String
-    private var todoHasReminder : Boolean = false
-    private var todoDate : Date? = null
+    private var todoHasReminder: Boolean = false
+    private var todoDate: Date? = null
 
-    private lateinit var todoReminderSwitch : SwitchMaterial
-    private lateinit var todoReminderTextView : TextView
-    private lateinit var todoDateTextView : TextView
-    private lateinit var todoTimeTextView : TextView
-    private lateinit var todoTitleEditText : TextInputEditText
-    private lateinit var todoDescriptionEditText : TextInputEditText
+    private lateinit var todoReminderSwitch: SwitchMaterial
+    private lateinit var todoReminderTextView: TextView
+    private lateinit var todoDateTextView: TextView
+    private lateinit var todoTimeTextView: TextView
+    private lateinit var todoTitleEditText: TextInputEditText
+    private lateinit var todoDescriptionEditText: TextInputEditText
     private lateinit var todoPrioritySpinner: AppCompatSpinner
-    private lateinit var todoMakeFab : FloatingActionButton
+    private lateinit var todoMakeFab: FloatingActionButton
     private lateinit var dateLinearLayout: LinearLayout
-    private lateinit var reminderLinearLayout : LinearLayout
+    private lateinit var reminderLinearLayout: LinearLayout
 
     // <-- AppCompatActivity over-ridden methods -->
 
@@ -95,7 +95,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
         todoTitleEditText.setText(todoTitle)
         todoDescriptionEditText.setText(todoDescription)
 
-        val imm : InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm: InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
         todoTitleEditText.setSelection(todoTitleEditText.length())
         todoDescriptionEditText.setSelection(todoDescriptionEditText.length())
@@ -242,7 +242,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
         }
 
         todoTitleEditText.addTextChangedListener(
-            object : TextWatcher {
+            object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -254,7 +254,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
         )
 
         todoDescriptionEditText.addTextChangedListener(
-            object : TextWatcher {
+            object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -429,7 +429,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     }
 
     private fun hideKeyboard(editText: TextInputEditText) {
-        val imm : InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm: InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 

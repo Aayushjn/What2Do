@@ -1,11 +1,11 @@
 package com.aayush.what2do.view.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.ParcelUuid
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import com.aayush.what2do.App
@@ -14,13 +14,12 @@ import com.aayush.what2do.model.TodoNote
 import com.aayush.what2do.util.TODO_ID
 import com.aayush.what2do.util.deleteTodoNote
 import com.aayush.what2do.util.getAllTodoNotes
-import com.aayush.what2do.view.activity.MainActivity
 import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import timber.log.Timber
 import java.util.*
 
-class ReminderFragment : Fragment() {
+class ReminderFragment: Fragment() {
     private lateinit var todoTitleTextView: TextView
     private lateinit var removeButton: MaterialButton
     private lateinit var spinner: AppCompatSpinner
@@ -59,6 +58,7 @@ class ReminderFragment : Fragment() {
             removeButton.setOnClickListener {
                 (todoNotes as ArrayList).remove(todoNote!!)
                 deleteTodoNote(App.getAppDatabase(context!!).todoNoteDao(), todoNote!!)
+                Toast.makeText(context, "Todo note completed!", Toast.LENGTH_SHORT).show()
 
                 closeApp()
             }
@@ -96,6 +96,7 @@ class ReminderFragment : Fragment() {
         val calendar = Calendar.getInstance()
         calendar.time = date
         calendar.add(Calendar.MINUTE, minutes)
+        Toast.makeText(context, "Snoozed for $minutes minutes", Toast.LENGTH_SHORT).show()
         return calendar.time
     }
 
@@ -109,9 +110,7 @@ class ReminderFragment : Fragment() {
     }
 
     private fun closeApp() {
-        val intent = Intent(context!!, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
+        activity?.finish()
     }
 
     private fun setupViews() {

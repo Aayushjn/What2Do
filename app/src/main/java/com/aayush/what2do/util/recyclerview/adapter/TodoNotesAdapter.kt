@@ -29,7 +29,7 @@ import java.util.*
 class TodoNotesAdapter(var context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var todoNotes = emptyList<TodoNote>().toMutableList()
-    private lateinit var deletedItem : TodoNote
+    private lateinit var deletedItem: TodoNote
     private var deletedItemPosition = 0
     var tts: TextToSpeech? = null
 
@@ -75,8 +75,8 @@ class TodoNotesAdapter(var context: Context) :
     }
 
     inner class TodoNotesViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-        var todoTitleTextView : TextView
-        var todoDescriptionTextView : TextView
+        var todoTitleTextView: TextView
+        var todoDescriptionTextView: TextView
         var todoReminderTextView: TextView
         var todoImageView: ImageView
 
@@ -105,6 +105,7 @@ class TodoNotesAdapter(var context: Context) :
         todoNotes.removeAt(position)
         notifyItemRemoved(position)
         deleteTodoNote(App.getAppDatabase(context).todoNoteDao(), deletedItem)
+        Toast.makeText(context, "Todo note deleted!", Toast.LENGTH_SHORT).show()
         deleteAlarm(context, Intent(context, TodoNotificationService::class.java), deletedItem.id.hashCode())
         showUndoSnackbar()
     }
@@ -161,6 +162,7 @@ class TodoNotesAdapter(var context: Context) :
         (todoNotes as ArrayList).add(deletedItemPosition, deletedItem)
         notifyItemInserted(deletedItemPosition)
         insertTodoNote(App.getAppDatabase(context).todoNoteDao(), deletedItem)
+        Toast.makeText(context, "Todo note added back!", Toast.LENGTH_SHORT).show()
 
         if (deletedItem.hasReminder && deletedItem.date != null) {
             val intent = Intent(context, TodoNotificationService::class.java)

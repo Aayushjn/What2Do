@@ -74,8 +74,9 @@ dependencies {
     // Room compiler annotation processor for Kotlin
     kapt("androidx.room:room-compiler:2.1.0-alpha04")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
 
     androidTestImplementation("androidx.test:runner:1.1.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1")
 }

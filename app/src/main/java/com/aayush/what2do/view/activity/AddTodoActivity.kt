@@ -8,7 +8,7 @@ import com.aayush.what2do.view.fragment.AddTodoFragment
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.base_toolbar.*
 
-class AddTodoActivity : AppCompatActivity() {
+class AddTodoActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

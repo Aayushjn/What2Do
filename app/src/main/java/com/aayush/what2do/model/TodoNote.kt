@@ -11,7 +11,7 @@ import java.util.*
 @Entity
 data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
                     var title: String,
-                    var description : String,
+                    var description: String,
                     var priority: Priority,
                     var hasReminder: Boolean,
                     var date: Date?,

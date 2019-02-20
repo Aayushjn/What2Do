@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,11 +29,11 @@ import kotlinx.android.synthetic.main.fragment_pending.*
 import java.util.*
 
 
-class PendingFragment : Fragment() {
+class PendingFragment: Fragment() {
     private lateinit var todoNotes: MutableList<TodoNote>
 
     private lateinit var recyclerView: EmptySupportRecyclerView
-    private lateinit var adapter : TodoNotesAdapter
+    private lateinit var adapter: TodoNotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,7 @@ class PendingFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != RESULT_CANCELED && requestCode == REQUEST_ID_TODO) {
-            val todoNote : TodoNote? = data?.getParcelableExtra(EXTRA_TODO_NOTE)
+            val todoNote: TodoNote? = data?.getParcelableExtra(EXTRA_TODO_NOTE)
             if (todoNote?.title?.length!! <= 0) {
                 return
             }
@@ -82,6 +83,7 @@ class PendingFragment : Fragment() {
             }
             adapter.notifyItemInserted(todoNotes.lastIndex)
             insertTodoNote(App.getAppDatabase(context!!).todoNoteDao(), todoNote)
+            Toast.makeText(context, "Todo note added!", Toast.LENGTH_SHORT).show()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -163,7 +165,7 @@ class PendingFragment : Fragment() {
                 return Pair(true, todoNotes.indexOf(note))
             }
         }
-        return Pair(false, -1)
+        return false to -1
     }
 
     companion object {

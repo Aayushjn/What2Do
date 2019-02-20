@@ -8,7 +8,7 @@ import com.aayush.what2do.view.fragment.ReminderFragment
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.base_toolbar.*
 
-class ReminderActivity : AppCompatActivity() {
+class ReminderActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

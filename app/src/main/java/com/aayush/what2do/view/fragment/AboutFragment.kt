@@ -14,7 +14,7 @@ import com.aayush.what2do.R
 import kotlinx.android.synthetic.main.fragment_about.*
 
 
-class AboutFragment : Fragment() {
+class AboutFragment: Fragment() {
     private lateinit var emailTextView: TextView
     private lateinit var githubTextView: TextView
 

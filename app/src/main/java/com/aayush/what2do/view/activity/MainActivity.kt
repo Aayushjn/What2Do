@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        var fragment : Fragment = PendingFragment.newInstance()
-        val fragmentClass : Class<out Fragment> = when (item.itemId) {
+        var fragment: Fragment = PendingFragment.newInstance()
+        val fragmentClass: Class<out Fragment> = when (item.itemId) {
             R.id.nav_pending -> {
                 PendingFragment::class.java
             }
