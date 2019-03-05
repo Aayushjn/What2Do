@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aayush.what2do.R
 import com.aayush.what2do.util.recyclerview.adapter.TodoNotesAdapter
 
-class SwipeToDeleteCallback(private val adapter: TodoNotesAdapter) :
+class SwipeCallback(private val adapter: TodoNotesAdapter) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private val clearPaint: Paint = Paint()
 

@@ -20,7 +20,7 @@ import com.aayush.what2do.model.TodoNote
 import com.aayush.what2do.util.*
 import com.aayush.what2do.util.recyclerview.EmptySupportRecyclerView
 import com.aayush.what2do.util.recyclerview.adapter.TodoNotesAdapter
-import com.aayush.what2do.util.recyclerview.callback.SwipeToDeleteCallback
+import com.aayush.what2do.util.recyclerview.callback.SwipeCallback
 import com.aayush.what2do.util.service.TodoNotificationService
 import com.aayush.what2do.view.activity.AddTodoActivity
 import com.amulyakhare.textdrawable.util.ColorGenerator
@@ -129,7 +129,7 @@ class PendingFragment: Fragment() {
                 }
             }
         )
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter))
+        val itemTouchHelper = ItemTouchHelper(SwipeCallback(adapter))
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.adapter = adapter
