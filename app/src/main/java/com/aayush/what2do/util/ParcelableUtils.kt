@@ -3,7 +3,7 @@ package com.aayush.what2do.util
 import android.os.Parcel
 import java.util.*
 
-// <-- Extension functions for Parcel -->
+// <-- Extension functions -->
 
 fun Parcel.readBoolean() = readInt() != 0
 

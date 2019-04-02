@@ -43,23 +43,23 @@ dependencies {
     // ConstraintLayout
     implementation("androidx.constraintlayout:constraintlayout:2.0.0-alpha3")
     // Kotlin core Android libraries
-    implementation("androidx.core:core-ktx:1.1.0-alpha04")
+    implementation("androidx.core:core-ktx:1.1.0-alpha05")
     // RecyclerView
-    implementation("androidx.recyclerview:recyclerview:1.1.0-alpha02")
+    implementation("androidx.recyclerview:recyclerview:1.1.0-alpha03")
     // Room runtime library
-    implementation("androidx.room:room-runtime:2.1.0-alpha04")
+    implementation("androidx.room:room-runtime:2.1.0-alpha06")
 
     // TextDrawable
     implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
 
     // Google's Material Design library
-    implementation("com.google.android.material:material:1.1.0-alpha03")
+    implementation("com.google.android.material:material:1.1.0-alpha05")
 
     // Timber for logging
     implementation("com.jakewharton.timber:timber:4.7.1")
 
     // Material DateTimePicker
-    implementation("com.wdullaer:materialdatetimepicker:4.1.1")
+    implementation("com.wdullaer:materialdatetimepicker:4.1.2")
 
     // Custom font injection library
     implementation("io.github.inflationx:calligraphy3:3.0.0")
@@ -72,7 +72,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
 
     // Room compiler annotation processor for Kotlin
-    kapt("androidx.room:room-compiler:2.1.0-alpha04")
+    kapt("androidx.room:room-compiler:2.1.0-alpha06")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
 

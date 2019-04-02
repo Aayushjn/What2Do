@@ -28,7 +28,7 @@ import com.aayush.what2do.model.TodoNote
 import com.aayush.what2do.util.EXTRA_TODO_NOTE
 import com.aayush.what2do.util.TAG_DATE_FRAGMENT
 import com.aayush.what2do.util.TAG_TIME_FRAGMENT
-import com.aayush.what2do.util.formatDate
+import com.aayush.what2do.util.dateToString
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
@@ -299,8 +299,8 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
 
     private fun setDateAndTimeTextView() {
         if (todoNote.hasReminder && todoDate != null) {
-            val date = formatDate("d MMM, yyyy", todoDate)
-            val time = formatDate(formatString, todoDate)
+            val date = dateToString(todoDate)
+            val time = dateToString(todoDate)
             todoDateTextView.text = date
             todoTimeTextView.text = time
         }
@@ -317,7 +317,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             calendar.set(Calendar.MINUTE, 0)
             todoDate = calendar.time
 
-            todoTimeTextView.text = formatDate(formatString, todoDate)
+            todoTimeTextView.text = dateToString(todoDate)
         }
     }
 
@@ -329,16 +329,16 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
                 return
             }
             val date = todoDate
-            val dateString = formatDate("d MMM, yyyy", date)
+            val dateString = dateToString(date)
             val timeString: String
             var amPmString = ""
 
             if (DateFormat.is24HourFormat(context)) {
-                timeString = formatDate("k:mm", date)
+                timeString = dateToString(date)
             }
             else {
-                timeString = formatDate("h:mm", date)
-                amPmString = formatDate("a", date)
+                timeString = dateToString(date)
+                amPmString = dateToString(date)
             }
             todoReminderTextView.text =
                 String.format(getString(R.string.remind_date_and_time), dateString, timeString, amPmString)
@@ -349,12 +349,11 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     }
 
     private fun setDateTextView() {
-        val dateFormat = "d MMM, yyyy"
-        todoDateTextView.text = formatDate(dateFormat, todoDate)
+        todoDateTextView.text = dateToString(todoDate)
     }
 
     private fun setTimeTextView() {
-        todoTimeTextView.text = formatDate(formatString, todoDate)
+        todoTimeTextView.text = dateToString(todoDate)
     }
 
     private fun setDateLayoutVisible(checked : Boolean) {

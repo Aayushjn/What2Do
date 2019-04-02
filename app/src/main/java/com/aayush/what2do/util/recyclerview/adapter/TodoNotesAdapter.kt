@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.speech.tts.TextToSpeech
-import android.text.format.DateFormat
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
@@ -65,10 +64,9 @@ class TodoNotesAdapter(var context: Context) :
             holder.todoImageView.setImageDrawable(textDrawable)
 
             if (todoNote.date != null) {
-                val timeToShow = formatDate(
-                    if (DateFormat.is24HourFormat(context)) "MMM d, yyyy  h:mm a"
-                    else "MMM d, yyyy  k:mm",
-                    todoNote.date)
+                val timeToShow = dateToString(
+                    todoNote.date
+                )
                 holder.todoReminderTextView.text = timeToShow
             }
         }
@@ -86,7 +84,7 @@ class TodoNotesAdapter(var context: Context) :
                 val intent = Intent(context, AddTodoActivity::class.java)
                 intent.putExtra(EXTRA_TODO_NOTE, todoNote)
                 val fragmentManager = (context as AppCompatActivity).supportFragmentManager
-                fragmentManager.findFragmentByTag(TAG_PENDING_FRAGMENT)?.startActivityForResult(intent, REQUEST_ID_TODO)
+                fragmentManager.findFragmentByTag(TAG_PENDING_FRAGMENT)?.startActivityForResult(intent, REQ_ID_TODO)
             }
             todoTitleTextView = view.findViewById(R.id.text_todo_title)
             todoDescriptionTextView = view.findViewById(R.id.text_todo_description)
@@ -113,25 +111,21 @@ class TodoNotesAdapter(var context: Context) :
     fun readItem(position: Int) {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
-                val result = this.tts?.setLanguage(Locale.ENGLISH)
+                val result = tts?.setLanguage(Locale.ENGLISH)
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Toast.makeText(context, "This Language is not supported", Toast.LENGTH_SHORT).show()
                 }
                 else {
                     val selectedItem = todoNotes[position]
-                    val timeToShow = formatDate(
-                        if (DateFormat.is24HourFormat(context)) "MMM d, yyyy  h:mm a"
-                        else "MMM d, yyyy  k:mm",
-                        selectedItem.date)
                     val text = if (selectedItem.hasReminder && selectedItem.date != null) {
                         selectedItem.title + "\n" + selectedItem.description + "\n" +
                                 selectedItem.priority + " priority\nTo be completed on " +
-                                formatDate(timeToShow, selectedItem.date)
+                                dateToString(selectedItem.date)
                     } else {
                         selectedItem.title + "\n" + selectedItem.description + "\n" +
                                 selectedItem.priority + " priority"
                     }
-                    tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TodoNote")
+                    speak(tts, text, UTTERANCE_ID_TODO_NOTE)
                 }
             }
             else {
