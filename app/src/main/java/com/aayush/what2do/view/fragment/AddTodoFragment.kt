@@ -9,37 +9,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.app.NavUtils
-import androidx.fragment.app.Fragment
 import com.aayush.what2do.R
 import com.aayush.what2do.model.Priority
 import com.aayush.what2do.model.TodoNote
-import com.aayush.what2do.util.EXTRA_TODO_NOTE
-import com.aayush.what2do.util.TAG_DATE_FRAGMENT
-import com.aayush.what2do.util.TAG_TIME_FRAGMENT
-import com.aayush.what2do.util.dateToString
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
+import com.aayush.what2do.util.android.asString
+import com.aayush.what2do.util.android.hideKeyboard
+import com.aayush.what2do.util.android.is24HourFormat
+import com.aayush.what2do.util.common.*
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_add_todo.*
 import java.util.*
 
 
-class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-    private lateinit var formatString: String
+class AddTodoFragment: BaseFragment(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+    private val timeFormatString: String by lazy {
+        if (is24HourFormat(context!!)) "k:mm" else "h:mm a"
+    }
 
     private lateinit var todoNote: TodoNote
     private lateinit var todoTitle: String
@@ -48,31 +42,10 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     private var todoHasReminder: Boolean = false
     private var todoDate: Date? = null
 
-    private lateinit var todoReminderSwitch: SwitchMaterial
-    private lateinit var todoReminderTextView: TextView
-    private lateinit var todoDateTextView: TextView
-    private lateinit var todoTimeTextView: TextView
-    private lateinit var todoTitleEditText: TextInputEditText
-    private lateinit var todoDescriptionEditText: TextInputEditText
-    private lateinit var todoPrioritySpinner: AppCompatSpinner
-    private lateinit var todoMakeFab: FloatingActionButton
-    private lateinit var dateLinearLayout: LinearLayout
-    private lateinit var reminderLinearLayout: LinearLayout
-
-    // <-- AppCompatActivity over-ridden methods -->
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        formatString = if (DateFormat.is24HourFormat(context)) {
-            "k:mm"
-        } else {
-            "h:mm a"
-        }
-
-        return inflater.inflate(R.layout.fragment_add_todo, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_add_todo, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,37 +60,37 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             setDateLayoutVisibleWithAnimations(true)
         }
         if (todoDate == null) {
-            todoReminderSwitch.isChecked = false
-            todoReminderTextView.visibility = View.GONE
+            switch_todo_reminder.isChecked = false
+            text_todo_reminder.visibility = View.GONE
         }
 
-        todoTitleEditText.requestFocus()
-        todoTitleEditText.setText(todoTitle)
-        todoDescriptionEditText.setText(todoDescription)
+        edit_todo_title.requestFocus()
+        edit_todo_title.setText(todoTitle)
+        edit_todo_desc.setText(todoDescription)
+        spinner_priority.setSelection(todoNote.priority.priorityNumber)
 
-        val imm: InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm: InputMethodManager = (parentContext as AppCompatActivity).getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-        todoTitleEditText.setSelection(todoTitleEditText.length())
-        todoDescriptionEditText.setSelection(todoDescriptionEditText.length())
+        edit_todo_title.setSelection(edit_todo_title.length())
+        edit_todo_desc.setSelection(edit_todo_desc.length())
 
-        setDateLayoutVisible(todoReminderSwitch.isChecked)
+        setDateLayoutVisible(switch_todo_reminder.isChecked)
 
-        todoReminderSwitch.isChecked = todoHasReminder && (todoDate != null)
+        switch_todo_reminder.isChecked = todoHasReminder && (todoDate != null)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            if (NavUtils.getParentActivityName(activity as AppCompatActivity) != null) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        if (item.itemId == android.R.id.home) {
+            if (NavUtils.getParentActivityName((parentContext as AppCompatActivity)) != null) {
                 makeTodoNote(RESULT_CANCELED)
-                hideKeyboard(todoTitleEditText)
-                hideKeyboard(todoDescriptionEditText)
-                NavUtils.navigateUpFromSameTask(activity as AppCompatActivity)
+                hideKeyboard(edit_todo_title)
+                hideKeyboard(edit_todo_desc)
+                NavUtils.navigateUpFromSameTask((parentContext as AppCompatActivity))
             }
             true
         } else {
             super.onOptionsItemSelected(item)
         }
-    }
 
     // <-- DatePickerDialog.OnDateSetListener over-ridden method -->
 
@@ -133,11 +106,11 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             return
         }
 
-        if (todoDate != null) {
-            calendar.time = todoDate
+        todoDate?.let {
+            calendar.time = it
         }
 
-        hour = if (DateFormat.is24HourFormat(context)) {
+        hour = if (is24HourFormat(context!!)) {
             calendar.get(Calendar.HOUR_OF_DAY)
         } else {
             calendar.get(Calendar.HOUR)
@@ -154,8 +127,8 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
 
     override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
         val calendar = Calendar.getInstance()
-        if (todoDate != null) {
-            calendar.time = todoDate
+        todoDate?.let {
+            calendar.time = it
         }
 
         val year = calendar.get(Calendar.YEAR)
@@ -169,7 +142,7 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     }
 
     private fun extractTodoNote() {
-        todoNote = activity?.intent?.getParcelableExtra(EXTRA_TODO_NOTE)!!
+        todoNote = (parentContext as AppCompatActivity).intent?.getParcelableExtra(EXTRA_TODO_NOTE)!!
 
         todoTitle = todoNote.title
         todoDescription = todoNote.description
@@ -179,33 +152,18 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     }
 
     private fun setupViews() {
-        todoReminderSwitch = switch_todo_reminder
-        todoReminderTextView = text_todo_reminder
-        todoDateTextView = text_todo_date
-        todoTimeTextView = text_todo_time
-        todoDescriptionEditText = edit_todo_desc
-        todoTitleEditText = edit_todo_title
-        todoPrioritySpinner = spinner_priority
-        todoMakeFab = fab_make_todo
-        dateLinearLayout = linear_layout_todo_time
-        reminderLinearLayout = linear_layout_todo_reminder
-
         ArrayAdapter.createFromResource(context!!, R.array.priority_options, android.R.layout.simple_spinner_item)
-            .also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                todoPrioritySpinner.adapter = adapter
+            .apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner_priority.adapter = this
             }
     }
 
     private fun setupListeners() {
-        todoDateTextView.setOnClickListener {
-            val date : Date? = if (todoNote.date != null) {
-                todoDate
-            } else {
-                Date()
-            }
-            hideKeyboard(todoTitleEditText)
-            hideKeyboard(todoDescriptionEditText)
+        text_todo_date.setOnClickListener {
+            val date: Date = todoDate ?: Date()
+            hideKeyboard(edit_todo_title)
+            hideKeyboard(edit_todo_desc)
 
             val calendar = Calendar.getInstance()
             calendar.time = date
@@ -214,19 +172,16 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog.newInstance(this, year, month, day)
-            datePickerDialog.isThemeDark = true
-            datePickerDialog.show(activity!!.supportFragmentManager, TAG_DATE_FRAGMENT)
+            DatePickerDialog.newInstance(this, year, month, day).apply {
+                isThemeDark = true
+                show((parentContext as AppCompatActivity).supportFragmentManager, TAG_DATE_FRAGMENT)
+            }
         }
 
-        todoTimeTextView.setOnClickListener {
-            val date : Date? = if (todoNote.date != null) {
-                todoDate
-            } else {
-                Date()
-            }
-            hideKeyboard(todoTitleEditText)
-            hideKeyboard(todoDescriptionEditText)
+        text_todo_time.setOnClickListener {
+            val date: Date = todoDate ?: Date()
+            hideKeyboard(edit_todo_title)
+            hideKeyboard(edit_todo_desc)
 
             val calendar = Calendar.getInstance()
             calendar.time = date
@@ -234,17 +189,15 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
 
-            val timePickerDialog = TimePickerDialog.newInstance(
-                this, hour, minute, DateFormat.is24HourFormat(context)
-            )
-            timePickerDialog.isThemeDark = true
-            timePickerDialog.show(activity!!.supportFragmentManager, TAG_TIME_FRAGMENT)
+            TimePickerDialog.newInstance(this, hour, minute, is24HourFormat(context!!)).apply {
+                isThemeDark = true
+                show((parentContext as AppCompatActivity).supportFragmentManager, TAG_TIME_FRAGMENT)
+            }
         }
 
-        todoTitleEditText.addTextChangedListener(
+        edit_todo_title.addTextChangedListener(
             object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
-
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -253,10 +206,9 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             }
         )
 
-        todoDescriptionEditText.addTextChangedListener(
+        edit_todo_desc.addTextChangedListener(
             object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
-
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -265,50 +217,48 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             }
         )
 
-        todoReminderSwitch.setOnCheckedChangeListener { _, isChecked ->
+        switch_todo_reminder.setOnCheckedChangeListener { _, isChecked ->
             if (!isChecked) {
                 todoDate = null
             }
             todoHasReminder = isChecked
             setDateAndTimeTextView()
             setDateLayoutVisibleWithAnimations(isChecked)
-            hideKeyboard(todoTitleEditText)
-            hideKeyboard(todoDescriptionEditText)
+            hideKeyboard(edit_todo_title)
+            hideKeyboard(edit_todo_desc)
         }
 
-        todoMakeFab.setOnClickListener {
-            if (todoTitleEditText.length() <= 0) {
-                todoTitleEditText.error = getString(R.string.todo_error)
-            }
-            else if (todoDate != null && todoDate!!.before(Date())) {
+        fab_make_todo.setOnClickListener {
+            if (edit_todo_title.length() <= 0) {
+                edit_todo_title.error = getString(R.string.todo_error)
+            } else if (todoDate != null && todoDate!!.before(Date())) {
                 makeTodoNote(RESULT_CANCELED)
-            }
-            else {
+            } else {
                 makeTodoNote(RESULT_OK)
-                activity?.finish()
+                (parentContext as AppCompatActivity).finish()
             }
-            hideKeyboard(todoTitleEditText)
-            hideKeyboard(todoDescriptionEditText)
+            hideKeyboard(edit_todo_title)
+            hideKeyboard(edit_todo_desc)
         }
 
-        reminderLinearLayout.setOnClickListener {
-            hideKeyboard(todoTitleEditText)
-            hideKeyboard(todoDescriptionEditText)
+        linear_layout_todo_reminder.setOnClickListener {
+            hideKeyboard(edit_todo_title)
+            hideKeyboard(edit_todo_desc)
         }
     }
 
     private fun setDateAndTimeTextView() {
         if (todoNote.hasReminder && todoDate != null) {
-            val date = dateToString(todoDate)
-            val time = dateToString(todoDate)
-            todoDateTextView.text = date
-            todoTimeTextView.text = time
+            val date = todoDate.formattedDate()
+            val time = todoDate.formattedTime(timeFormatString)
+            text_todo_date.text = date
+            text_todo_time.text = time
         }
         else {
-            todoDateTextView.text = getString(R.string.date_default)
+            text_todo_date.text = getString(R.string.date_default)
             val calendar : Calendar = Calendar.getInstance()
 
-            if (DateFormat.is24HourFormat(context)) {
+            if (is24HourFormat(context!!)) {
                 calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) + 1)
             }
             else {
@@ -317,82 +267,64 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
             calendar.set(Calendar.MINUTE, 0)
             todoDate = calendar.time
 
-            todoTimeTextView.text = dateToString(todoDate)
+            text_todo_time.text = todoDate.formattedTime(timeFormatString)
         }
     }
 
     private fun setReminderTextView() {
         if (todoDate != null) {
-            todoReminderTextView.visibility = View.VISIBLE
+            text_todo_reminder.visibility = View.VISIBLE
             if (todoDate!!.before(Date())) {
-                todoReminderTextView.error = getString(R.string.date_error_check_again)
+                text_todo_reminder.error = getString(R.string.date_error_check_again)
                 return
             }
-            val date = todoDate
-            val dateString = dateToString(date)
-            val timeString: String
-            var amPmString = ""
-
-            if (DateFormat.is24HourFormat(context)) {
-                timeString = dateToString(date)
-            }
-            else {
-                timeString = dateToString(date)
-                amPmString = dateToString(date)
-            }
-            todoReminderTextView.text =
-                String.format(getString(R.string.remind_date_and_time), dateString, timeString, amPmString)
-        }
-        else {
-            todoReminderTextView.visibility = View.GONE
+            val dateString = todoDate.formattedDate()
+            val timeString: String = todoDate.formattedTime(timeFormatString)
+            text_todo_reminder.text =
+                String.format(getString(R.string.remind_date_and_time), dateString, timeString)
+        } else {
+            text_todo_reminder.visibility = View.GONE
         }
     }
 
     private fun setDateTextView() {
-        todoDateTextView.text = dateToString(todoDate)
+        text_todo_date.text = todoDate.formattedDate()
     }
 
     private fun setTimeTextView() {
-        todoTimeTextView.text = dateToString(todoDate)
+        text_todo_time.text = todoDate.formattedTime(timeFormatString)
     }
 
-    private fun setDateLayoutVisible(checked : Boolean) {
-        if (checked) {
-            dateLinearLayout.visibility = View.VISIBLE
-        }
-        else {
-            dateLinearLayout.visibility = View.GONE
-        }
+    private fun setDateLayoutVisible(checked : Boolean) = if (checked) {
+        linear_layout_todo_time.visibility = View.VISIBLE
+    } else {
+        linear_layout_todo_time.visibility = View.GONE
     }
 
     private fun setDateLayoutVisibleWithAnimations(checked: Boolean) {
         if (checked) {
             setReminderTextView()
-            dateLinearLayout.animate().alpha(1.0f).setDuration(500).setListener(
+            linear_layout_todo_time.animate().alpha(1.0f).setDuration(500).setListener(
                 object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {
-                        dateLinearLayout.visibility = View.VISIBLE
+                        linear_layout_todo_time.visibility = View.VISIBLE
                     }
 
                     override fun onAnimationEnd(animation: Animator) {}
-
                     override fun onAnimationCancel(animation: Animator) {}
-
                     override fun onAnimationRepeat(animation: Animator) {}
                 }
             )
-        }
-        else {
-            dateLinearLayout.animate().alpha(0.0f).setDuration(500).setListener(
+        } else {
+            linear_layout_todo_time.animate().alpha(0.0f).setDuration(500).setListener(
                 object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
 
                     override fun onAnimationEnd(animation: Animator) {
-                        dateLinearLayout.visibility = View.GONE
+                        linear_layout_todo_time.visibility = View.GONE
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
-
                     override fun onAnimationRepeat(animation: Animator) {}
                 }
             )
@@ -402,13 +334,13 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
     private fun makeTodoNote(result : Int) {
         val intent = Intent()
 
-        todoTitle = todoTitle.capitalize()
-        todoDescription = todoDescription.capitalize()
-        todoPriority = todoPrioritySpinner.selectedItem.toString()
+        todoTitle = edit_todo_title.asString().capitalize()
+        todoDescription = edit_todo_desc.asString().capitalize()
+        todoPriority = spinner_priority.selectedItem.toString()
 
-        if (todoDate != null) {
+        todoDate?.let {
             val calendar = Calendar.getInstance()
-            calendar.time = todoDate
+            calendar.time = it
             calendar.set(Calendar.SECOND, 0)
             todoDate = calendar.time
         }
@@ -424,16 +356,10 @@ class AddTodoFragment : Fragment(), DatePickerDialog.OnDateSetListener, TimePick
         todoNote.date = todoDate
 
         intent.putExtra(EXTRA_TODO_NOTE, todoNote)
-        activity?.setResult(result, intent)
-    }
-
-    private fun hideKeyboard(editText: TextInputEditText) {
-        val imm: InputMethodManager = activity?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(editText.windowToken, 0)
+        (parentContext as AppCompatActivity).setResult(result, intent)
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() = AddTodoFragment()
+        @JvmStatic fun newInstance() = AddTodoFragment()
     }
 }

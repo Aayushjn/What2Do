@@ -5,7 +5,5 @@ enum class Priority(private val priority: String, val priorityNumber: Int) {
     MEDIUM("Medium", 1),
     HIGH("High", 2);
 
-    override fun toString(): String {
-        return priority
-    }
+    override fun toString(): String = priority
 }

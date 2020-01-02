@@ -122,7 +122,7 @@
                         android:textColor="@color/colorIcon"
                         android:textSize="16sp" />
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_todo_reminder"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -130,8 +130,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:padding="8dp"
-                        style="@style/SwitchTheme"
-                        app:useMaterialThemeColors="false"/>
+                        style="@style/SwitchTheme"/>
 
                 </LinearLayout>
 

@@ -11,7 +11,7 @@
     <string name="remind_me">Remind Me</string>
     <string name="at">\@</string>
     <string name="description">Description</string>
-    <string name="remind_date_and_time">Reminder set for %1$s, %2$s %3$s</string>
+    <string name="remind_date_and_time">Reminder set for %1$s, %2$s</string>
     <string name="todo_error">Title cannot be empty</string>
     <string name="date_error_check_again">Time travel seems hard to do. Enter a valid date</string>
     <string name="date_default">Today</string>

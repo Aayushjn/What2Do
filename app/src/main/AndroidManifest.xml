@@ -34,8 +34,8 @@
                     android:value=".view.activity.MainActivity"/>
         </activity>
 
-        <service android:name=".util.service.TodoNotificationService"/>
-        <service android:name=".util.service.DeleteNotificationService"/>
+        <service android:name="com.aayush.what2do.util.android.service.TodoNotificationService"/>
+        <service android:name="com.aayush.what2do.util.android.service.DeleteNotificationService"/>
     </application>
 
 </manifest>

@@ -1,12 +1,13 @@
 package com.aayush.what2do.model
 
+import android.os.Build
 import android.os.Parcel
 import android.os.ParcelUuid
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.aayush.what2do.util.*
-import java.util.*
+import com.aayush.what2do.util.android.*
+import java.util.Date
 
 @Entity
 data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
@@ -15,32 +16,38 @@ data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
                     var priority: Priority,
                     var hasReminder: Boolean,
                     var date: Date?,
-                    var color: Int): Parcelable, Comparable<TodoNote> {
+                    var color: Int): KParcelable, Comparable<TodoNote> {
 
-    constructor(parcel: Parcel) : this(
+    private constructor(parcel: Parcel): this(
         parcel.readParcelable(ParcelUuid::class.java.classLoader)!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readEnum<Priority>()!!,
-        parcel.readBoolean(),
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            parcel.readBoolean()
+        } else {
+            parcel.readBool()
+        },
         parcel.readDate(),
         parcel.readInt()
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
         writeParcelable(id, flags)
         writeString(title)
         writeString(description)
         writeEnum(priority)
-        writeBoolean(hasReminder)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            writeBoolean(hasReminder)
+        } else {
+            writeBool(hasReminder)
+        }
         writeDate(date)
         writeInt(color)
     }
 
-    override fun describeContents() = 0
-
     // Sort by priority, then by date if any, otherwise te title
-    override fun compareTo(other: TodoNote) = compareValuesBy(
+    override fun compareTo(other: TodoNote): Int = compareValuesBy(
         this,
         other,
         { it.priority },
@@ -48,8 +55,16 @@ data class TodoNote(@PrimaryKey(autoGenerate = false) val id: ParcelUuid,
     )
 
     companion object CREATOR: Parcelable.Creator<TodoNote> {
-        override fun createFromParcel(parcel: Parcel) = TodoNote(parcel)
-
-        override fun newArray(size: Int) = arrayOfNulls<TodoNote>(size)
+        override fun createFromParcel(parcel: Parcel): TodoNote = TodoNote(parcel)
+        override fun newArray(size: Int): Array<TodoNote?> = arrayOfNulls(size)
     }
+}
+
+fun List<TodoNote>.has(element: TodoNote): Pair<Boolean, Int> {
+    forEachIndexed { index, todoNote ->
+        if (element.id == todoNote.id) {
+            return true to index
+        }
+    }
+    return false to -1
 }

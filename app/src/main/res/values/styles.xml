@@ -12,7 +12,7 @@
     </style>
 
     <style name="SwitchTheme" parent="Theme.MaterialComponents">
-        <item name="switchStyle">@style/Widget.MaterialComponents.CompoundButton.Switch</item>
+        <item name="switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
     </style>
     
     <style name="ItemLabel" parent="TextAppearance.MaterialComponents.Caption">

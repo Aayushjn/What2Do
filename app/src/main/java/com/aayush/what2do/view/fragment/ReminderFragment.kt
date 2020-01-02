@@ -4,76 +4,60 @@ import android.os.Bundle
 import android.os.ParcelUuid
 import android.view.*
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatSpinner
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.aayush.what2do.App
 import com.aayush.what2do.R
 import com.aayush.what2do.model.TodoNote
-import com.aayush.what2do.util.TODO_ID
-import com.aayush.what2do.util.deleteTodoNote
-import com.aayush.what2do.util.getAllTodoNotes
-import com.google.android.material.button.MaterialButton
+import com.aayush.what2do.util.android.toast
+import com.aayush.what2do.util.common.TODO_ID
+import com.aayush.what2do.util.db.deleteTodoNote
+import com.aayush.what2do.util.db.getTodoNoteById
 import kotlinx.android.synthetic.main.fragment_reminder.*
 import timber.log.Timber
 import java.util.*
 
-class ReminderFragment: Fragment() {
-    private lateinit var todoTitleTextView: TextView
-    private lateinit var removeButton: MaterialButton
-    private lateinit var spinner: AppCompatSpinner
+class ReminderFragment: BaseFragment() {
     private lateinit var snoozeOptions: Array<String>
-    private lateinit var todoNotes: List<TodoNote>
+    private var todoNotes: MutableList<TodoNote> = mutableListOf()
     private var todoNote: TodoNote? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_reminder, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_reminder, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViews()
-
-        todoNotes = getAllTodoNotes(App.getAppDatabase(context!!).todoNoteDao())
-
-        val intent = activity?.intent!!
-        val id: ParcelUuid = intent.getParcelableExtra(TODO_ID)
-
-        for (note in todoNotes) {
-            if (note.id == id) {
-                todoNote = note
-                break
-            }
-        }
+        val id: ParcelUuid = (parentContext as AppCompatActivity).intent!!.getParcelableExtra(TODO_ID)!!
+        todoNotes = App.getAppDatabase(parentContext!!).getTodoNoteById(id).toMutableList()
+        todoNote = if (todoNotes.isEmpty()) null else todoNotes[0]
 
         snoozeOptions = resources.getStringArray(R.array.snooze_options)
-        todoTitleTextView.text = todoNote?.title
+        text_todo_title.text = todoNote?.title
 
         if (todoNote != null) {
-            removeButton.setOnClickListener {
-                (todoNotes as ArrayList).remove(todoNote!!)
-                deleteTodoNote(App.getAppDatabase(context!!).todoNoteDao(), todoNote!!)
-                Toast.makeText(context, "Todo note completed!", Toast.LENGTH_SHORT).show()
+            btn_todo_remove.setOnClickListener {
+                todoNotes.remove(todoNote!!)
+                App.getAppDatabase(context!!).deleteTodoNote(todoNote!!)
+
+                context?.toast("Todo note completed!")
 
                 closeApp()
             }
-        }
-        else {
+        } else {
             Timber.d("Todo note is null")
         }
 
-        val adapter = ArrayAdapter<String>(context!!, R.layout.text_view_spinner, snoozeOptions)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        spinner.adapter = adapter
+        spinner_snooze.adapter = ArrayAdapter<String>(
+            context!!,
+            R.layout.text_view_spinner,
+            snoozeOptions
+        ).apply { setDropDownViewResource(R.layout.spinner_dropdown_item) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        activity?.menuInflater?.inflate(R.menu.menu_reminder, menu)
+        (parentContext as AppCompatActivity).menuInflater.inflate(R.menu.menu_reminder, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -85,42 +69,31 @@ class ReminderFragment: Fragment() {
                 closeApp()
                 true
             }
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun addTimeToDate(minutes: Int): Date {
-        val date = Date()
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        calendar.add(Calendar.MINUTE, minutes)
-        Toast.makeText(context, "Snoozed for $minutes minutes", Toast.LENGTH_SHORT).show()
+        val calendar = Calendar.getInstance().apply {
+            time = Date()
+            add(Calendar.MINUTE, minutes)
+        }
+        context?.toast("Snoozed for $minutes minutes")
         return calendar.time
     }
 
-    private fun valueFromSpinner(): Int {
-        return when (spinner.selectedItemPosition) {
-            0 -> 10
-            1 -> 30
-            2 -> 60
-            else -> 0
-        }
+    private fun valueFromSpinner(): Int = when (spinner_snooze.selectedItemPosition) {
+        0 -> 10
+        1 -> 30
+        2 -> 60
+        else -> 0
     }
 
     private fun closeApp() {
-        activity?.finish()
-    }
-
-    private fun setupViews() {
-        todoTitleTextView = text_todo_title
-        removeButton = btn_todo_remove
-        spinner = spinner_snooze
+        (parentContext as AppCompatActivity).finish()
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() = ReminderFragment()
+        @JvmStatic fun newInstance() = ReminderFragment()
     }
 }

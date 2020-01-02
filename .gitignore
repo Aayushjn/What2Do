@@ -4,7 +4,3 @@
 build/
 app/libs/
 .idea/
-/captures
-gen/
-.externalNativeBuild
-.DS_Store

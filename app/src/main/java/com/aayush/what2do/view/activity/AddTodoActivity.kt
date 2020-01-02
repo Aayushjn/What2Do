@@ -1,30 +1,30 @@
 package com.aayush.what2do.view.activity
 
-import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
 import com.aayush.what2do.R
 import com.aayush.what2do.view.fragment.AddTodoFragment
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.base_toolbar.*
 
-class AddTodoActivity: AppCompatActivity() {
-
+class AddTodoActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_todo)
 
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Add new todo"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_cross)
+        supportActionBar?.apply {
+            title = "Add new todo"
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_cross)
+        }
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, AddTodoFragment.newInstance())
-            .commit()
+        supportFragmentManager.commit {
+            replace(R.id.fragment_container, AddTodoFragment.newInstance())
+        }
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase!!))
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

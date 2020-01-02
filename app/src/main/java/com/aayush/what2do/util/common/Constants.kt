@@ -1,4 +1,4 @@
-package com.aayush.what2do.util
+package com.aayush.what2do.util.common
 
 const val EXTRA_TODO_NOTE = "TodoNoteExtra"
 
@@ -17,3 +17,6 @@ const val PERMISSION_SETTINGS_REQUEST = 201
 const val UTTERANCE_ID_TODO_NOTE = "TodoNoteUtteranceId"
 const val UTTERANCE_ID_ADD_TODO = "AddTodoUtteranceId"
 const val UTTERANCE_ID_SPEECH_ERROR = "SpeechErrorUtteranceId"
+
+const val CHANNEL_REMINDER_ID = "ReminderChannelId"
+const val CHANNEL_REMINDER = "Reminders"
